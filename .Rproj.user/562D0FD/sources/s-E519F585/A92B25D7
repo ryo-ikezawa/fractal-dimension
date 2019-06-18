@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1560408631443.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "A92B25D7",
+    "lastKnownWriteTime" : 1560842563,
+    "last_content_update" : 1560842563943,
+    "path" : "~/20190523/fractal/sampling_rate.R",
+    "project_path" : "sampling_rate.R",
+    "properties" : {
+        "cursorPosition" : "29,27",
+        "scrollLine" : "4"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

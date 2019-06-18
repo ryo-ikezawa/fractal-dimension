@@ -1,0 +1,77 @@
+library(tuneR) #waveライブラリ
+library(fractaldim) #フラクタmotiル次元ライブラリ
+library(snowfall) #並列計算ライブラリ
+library(pcaPP) #pcaPPライブラリ
+library(wavelets) #waveletライブラリ/
+
+
+#reading wavefile and choice ch1
+#print("read wave file and choice ch1")
+for (i in 10:14) {
+  print(i)
+    #wavefilename <- paste("../ch1/20190523_120720/B4-01_20190523_120720/Wave/WR_B4-01_20190523_120724_00",i,".wav",sep = "")
+    #wavefilename <- paste("../ch2/20190523_120626/B4-01_20190523_120626/Wave/WR_B4-01_20190523_120621_0",i,".wav",sep = "")
+  #wavefilename <- paste("../../20190220/ch1/20190220_144135/B4-01_20190220_144135/Wave/WR_B4-01_20190220_144134_00",i,".wav",sep = "")
+  wavefilename <- paste("../../20190220/ch2/20190220_144140/B4-01_20190220_144140/Wave/WR_B4-01_20190220_144139_00",i,".wav",sep = "")
+  
+  basewave <- readWave(filename = wavefilename)#read wave
+  if(i==10){#choice ch1
+    base <- basewave@left
+  }else{
+    base <- c(base,basewave@left)
+  }#next wavefile
+}
+rm(basewave)#delete
+if(FALSE){
+#51.2kHz fractal dim / 5min
+print("calculate Fractal-Dim @51.2kHz")
+for (i in 1:120) {
+  print(i)
+  start <- (i-1)*15360000+1
+  stop <- i*15360000
+  matrix <- matrix(base[start:stop],4000,3840)
+  cal <- apply(matrix,2,fd.estim.madogram)
+  fd <- matrix(,1,3840)
+  for (j in 1:3840) {
+    fd[1,j] <- cal[[j]][["fd"]]
+  } #用意した配列にフラクタル次元データを書き出し
+  if(i==1){
+    fd_mean <- c(i,mean(fd),sd(fd))
+  }else{
+    fd_mean <- rbind(fd_mean,c(i,mean(fd),sd(fd)))
+  }
+}
+png("fd_51.2kHz_x56.png")#plot
+plot(fd_mean[,1],fd_mean[,2],col='red',pch=20,ylim=c(1,2),main="Fractal-Dimension_madogram_51.2kHz_1000RPM",xlab="times(x300sec)",ylab="Fractal-Dimension")
+arrows(fd_mean[,1],fd_mean[,2],fd_mean[,1],fd_mean[,2]-fd_mean[,3],angle=90,length=0.02,lwd=1,col="red")
+arrows(fd_mean[,1],fd_mean[,2],fd_mean[,1],fd_mean[,2]+fd_mean[,3],angle=90,length=0.02,lwd=1,col="red")
+dev.off()
+}
+
+for (i in 1:80) {
+  print(i)
+  sample_rate <- 51.2*1000/i
+  downsample <- matrix(,1,15360000)
+  for (j in 1:15360000) {
+#    status <- paste("i=",i,"j=",j)
+#    print(status)
+    samplepoint <- i*(j-1)+1
+    downsample[1,j] <- base[samplepoint]
+  }
+  downsample_matrix <- matrix(downsample,4000,3840)
+  downsample_cal <- apply(downsample_matrix,2,fd.estim.madogram)
+  downsample_fd <- matrix(,1,3840)
+  for (j in 1:3840) {
+    downsample_fd[1,j] <- downsample_cal[[j]][["fd"]]
+  } #用意した配列にフラクタル次元データを書き出し
+  if(i==1){
+    fd_downsample_mean <- c(sample_rate,mean(downsample_fd),sd(downsample_fd))
+  }else{
+    fd_downsample_mean <- rbind(fd_downsample_mean,c(sample_rate,mean(downsample_fd),sd(downsample_fd)))
+  }
+}
+png("sampling-rate_FD_madogram_ch1.png")#plot
+plot(fd_downsample_mean[,1],fd_downsample_mean[,2],col='red',pch=20,ylim=c(1,3),log="x",main="Sampling-Rate vs Fractal-Dimension_madogram_51.2kHz_0RPM",xlab="sampling-rate [Hz]",ylab="Fractal-Dimension")
+arrows(fd_downsample_mean[,1],fd_downsample_mean[,2],fd_downsample_mean[,1],fd_downsample_mean[,2]-fd_downsample_mean[,3],angle=90,length=0.05,lwd=1,col="red")
+arrows(fd_downsample_mean[,1],fd_downsample_mean[,2],fd_downsample_mean[,1],fd_downsample_mean[,2]+fd_downsample_mean[,3],angle=90,length=0.05,lwd=1,col="red")
+dev.off()

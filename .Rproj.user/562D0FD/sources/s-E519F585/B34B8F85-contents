@@ -1,0 +1,109 @@
+library(tuneR)
+library(fractaldim)
+library(snowfall)
+library(pcaPP)
+library(wavelets)
+
+pomp_step <- 6
+motor_step <- 6
+for (m in 21:30) {
+  if(m<10){
+  file_name <- paste("../ch1/20190523_120720/B4-01_20190523_120720/Wave/WR_B4-01_20190523_120724_000",m,".wav",sep = "")
+  print(file_name)
+  }else{
+    file_name <- paste("../ch1/20190523_120720/B4-01_20190523_120720/Wave/WR_B4-01_20190523_120724_00",m,".wav",sep = "")
+    print(file_name)
+  }
+
+  base <- readWave(file_name)
+  basewave <- base@left
+  basewave_number <- length(basewave)
+  downsample_limit <- floor(basewave_number/pomp_step)
+  downsample <- matrix(,1,downsample_limit)
+  for (j in 1:downsample_limit) {
+    samplepoint <- pomp_step*(j-1)+1
+    downsample[1,j] <- basewave[samplepoint]
+  }
+  downsample_number <- length(downsample)
+  downsample_f <- 51200/pomp_step
+  downsample_sec <- floor(downsample_number/downsample_f)
+  downsample_sec_number <- downsample_f/1000
+
+  for (n in 1:5586) {
+    cal_matrix <- matrix(downsample[(downsample_f*(n-1)+1):(downsample_f*n)],1000,downsample_sec_number)
+    cal_fd <- apply(cal_matrix,2,fd.estim.madogram)
+    collect_fd <- matrix(,1,downsample_sec_number)
+    for (j in 1:downsample_sec_number) {
+      collect_fd[1,j] <- cal_fd[[j]][["fd"]]
+    } #用意した??????にフラクタル次??????ータを書き??????
+  
+    if(m==21){   
+      if(n==1){
+        pomp_fd_downsample <- c((n+(m-1)*5586),mean(collect_fd),sd(collect_fd))
+      }
+      if(n>1){
+        pomp_fd_downsample <- rbind(pomp_fd_downsample,c((n+(m-1)*5586),mean(collect_fd),sd(collect_fd)))
+      }
+    }
+    if(m>21){
+      pomp_fd_downsample <- rbind(pomp_fd_downsample,c((n+(m-1)*5586),mean(collect_fd),sd(collect_fd)))
+    }
+  }
+}
+png("dowmsample-one_FD_madogram_ch1.png") #plot
+plot(pomp_fd_downsample[,1],pomp_fd_downsample[,2],col='red',pch=20, xlim=c(0,5000),ylim=c(1,3),main="Sampling-Rate vs Fractal-Dimension_madogram_51.2kHz_0RPM",xlab="sampling-rate [Hz]",ylab="Fractal-Dimension")
+arrows(pomp_fd_downsample[,1],pomp_fd_downsample[,2],pomp_fd_downsample[,1],pomp_fd_downsample[,2]-pomp_fd_downsample[,3],angle=90,length=0.05,lwd=1,col="red")
+arrows(pomp_fd_downsample[,1],pomp_fd_downsample[,2],pomp_fd_downsample[,1],pomp_fd_downsample[,2]+pomp_fd_downsample[,3],angle=90,length=0.05,lwd=1,col="red")
+dev.off()
+if(0){
+for (m in 21:30) {
+  if(m<10){
+  file_name <- paste("../ch2/20190523_120626/B4-01_20190523_120626/Wave/WR_B4-01_20190523_120621_000",m,".wav",sep = "")
+  print(file_name)
+  }else{
+    file_name <- paste("../ch2/20190523_120626/B4-01_20190523_120626/Wave/WR_B4-01_20190523_120621_00",m,".wav",sep = "")
+    print(file_name) 
+  }
+  
+  
+  base <- readWave(file_name)
+  basewave <- base@left
+  basewave_number <- length(basewave)
+  downsample_limit <- floor(basewave_number/motor_step)
+  downsample <- matrix(,1,downsample_limit)
+  for (j in 1:downsample_limit) {
+    samplepoint <- motor_step*(j-1)+1
+    downsample[1,j] <- basewave[samplepoint]
+  }
+  downsample_number <- length(downsample)
+  downsample_f <- 51200/motor_step
+  downsample_sec <- floor(downsample_number/downsample_f)
+  downsample_sec_number <- downsample_f/1000
+  
+  for (n in 1:5586) {
+    cal_matrix <- matrix(downsample[(downsample_f*(n-1)+1):(downsample_f*n)],1000,downsample_sec_number)
+    cal_fd <- apply(cal_matrix,2,fd.estim.madogram)
+    collect_fd <- matrix(,1,downsample_sec_number)
+    for (j in 1:downsample_sec_number) {
+      collect_fd[1,j] <- cal_fd[[j]][["fd"]]
+    } #用意した??????にフラクタル次??????ータを書き??????
+    
+    if(m==21){   
+      if(n==1){
+        motor_fd_downsample <- c((n+(m-1)*5586),mean(collect_fd),sd(collect_fd))
+      }
+      if(n>1){
+        motor_fd_downsample <- rbind(motor_fd_downsample,c((n+(m-1)*5586),mean(collect_fd),sd(collect_fd)))
+      }
+    }
+    if(m>21){
+      motor_fd_downsample <- rbind(motor_fd_downsample,c((n+(m-1)*5586),mean(collect_fd),sd(collect_fd)))
+    }
+  }
+}
+png("dowmsample-one_FD_madogram_ch2.png") #plot
+plot(motor_fd_downsample[,1],motor_fd_downsample[,2],col='red',pch=20,ylim=c(1,3),log="x",main="Sampling-Rate vs Fractal-Dimension_madogram_51.2kHz_0RPM",xlab="sampling-rate [Hz]",ylab="Fractal-Dimension")
+arrows(motor_fd_downsample[,1],motor_fd_downsample[,2],motor_fd_downsample[,1],motor_fd_downsample[,2]-motor_fd_downsample[,3],angle=90,length=0.05,lwd=1,col="red")
+arrows(motor_fd_downsample[,1],motor_fd_downsample[,2],motor_fd_downsample[,1],motor_fd_downsample[,2]+motor_fd_downsample[,3],angle=90,length=0.05,lwd=1,col="red")
+dev.off()
+}

@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1560858124235.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2325371642",
+    "id" : "5D6FEED3",
+    "lastKnownWriteTime" : 1560898788,
+    "last_content_update" : 1560898788727,
+    "path" : "~/20190523/fractal/down_plot.R",
+    "project_path" : "down_plot.R",
+    "properties" : {
+        "cursorPosition" : "51,27",
+        "scrollLine" : "24"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 9,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

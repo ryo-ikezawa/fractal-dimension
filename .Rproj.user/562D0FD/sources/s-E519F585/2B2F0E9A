@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1559798322825.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "2B2F0E9A",
+    "lastKnownWriteTime" : 1559810605,
+    "last_content_update" : 1559810605912,
+    "path" : "~/20190523/fractal/downsample_all_save.R",
+    "project_path" : "downsample_all_save.R",
+    "properties" : {
+        "cursorPosition" : "40,24",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
